@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { TinyBase } from './base.js';
-import { countProps } from './propsRegistry.js';
-import { createStore } from './store.js';
-import { setAppStore } from './appStore.js';
-import { createPropsRegistry } from './propsRegistry.js';
-import { resetSharedState } from './testing.js';
+import { TinyBase } from '../src/base.js';
+import { countProps } from '../src/propsRegistry.js';
+import { createStore } from '../src/store.js';
+import { setAppStore } from '../src/appStore.js';
+import { createPropsRegistry } from '../src/propsRegistry.js';
+import { resetSharedState } from '../src/testing.js';
 
 function define(name, cls) {
   if (!customElements.get(name)) {

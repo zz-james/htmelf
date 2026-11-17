@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { createCleanupScope } from './cleanupScope.js';
+import { createCleanupScope } from '../src/cleanupScope.js';
 
 describe('createCleanupScope', () => {
   afterEach(() => vi.restoreAllMocks());

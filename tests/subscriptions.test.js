@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { createSubscriptions } from './subscriptions.js';
+import { createSubscriptions } from '../src/subscriptions.js';
 
 describe('createSubscriptions', () => {
   afterEach(() => vi.restoreAllMocks());
