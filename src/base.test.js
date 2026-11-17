@@ -3,6 +3,8 @@ import { TinyBase } from './base.js';
 import { countProps } from './propsRegistry.js';
 import { createStore } from './store.js';
 import { setAppStore } from './appStore.js';
+import { createPropsRegistry } from './propsRegistry.js';
+import { resetSharedState } from './testing.js';
 
 function define(name, cls) {
   if (!customElements.get(name)) {
@@ -55,6 +57,7 @@ define('tb-render-once', RenderOnce);
 
 beforeEach(() => {
   document.body.innerHTML = '';
+  resetSharedState();
 });
 
 describe('TinyBase.registerCleanup', () => {
@@ -298,5 +301,71 @@ describe('TinyBase.getStore', () => {
 
       expect(() => el.connectedCallback()).toThrow(/no app store is registered/i);
     });
+  });
+});
+
+describe('TinyBase.withContext', () => {
+  it('uses an injected store without setAppStore being called', () => {
+    const store = createStore((state = 0) => state, 7);
+    const Base = TinyBase.withContext({ store });
+    class Counter extends Base {
+      render() {
+        this.textContent = String(this.getStore().getState());
+      }
+    }
+    define('tb-injected-store', Counter);
+
+    const el = document.createElement('tb-injected-store');
+    document.body.appendChild(el);
+
+    expect(el.textContent).toBe('7');
+  });
+
+  it('does not change the shared store for plain TinyBase components', () => {
+    const shared = createStore((state = 0) => state, 1);
+    setAppStore(shared);
+    TinyBase.withContext({ store: createStore((state = 0) => state, 2) });
+
+    expect(document.createElement('tb-harness').getStore()).toBe(shared);
+  });
+
+  it('falls back to the shared store when only a registry is injected', () => {
+    const shared = createStore((state = 0) => state, 3);
+    setAppStore(shared);
+    class Plain extends TinyBase.withContext({ propsRegistry: createPropsRegistry() }) {}
+    define('tb-registry-only', Plain);
+
+    expect(document.createElement('tb-registry-only').getStore()).toBe(shared);
+  });
+
+  it('keeps a parent and child on the injected registry, away from the shared one', () => {
+    const registry = createPropsRegistry();
+    const Base = TinyBase.withContext({ propsRegistry: registry });
+    class CtxChild extends Base {
+      render() {
+        this.textContent = 'child';
+      }
+    }
+    class CtxParent extends Base {
+      saved = [];
+      render() {
+        this.innerHTML = `<tb-ctx-child ${this.setProps({
+          save: (value) => this.saved.push(value),
+        })}></tb-ctx-child>`;
+      }
+    }
+    define('tb-ctx-child', CtxChild);
+    define('tb-ctx-parent', CtxParent);
+
+    const parent = document.createElement('tb-ctx-parent');
+    document.body.appendChild(parent);
+
+    expect(registry.countProps()).toBe(1);
+    expect(countProps()).toBe(0);
+    parent.querySelector('tb-ctx-child').props.save('hi');
+    expect(parent.saved).toEqual(['hi']);
+
+    parent.remove();
+    expect(registry.countProps()).toBe(0);
   });
 });

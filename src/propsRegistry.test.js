@@ -1,7 +1,57 @@
-import { describe, it, expect, vi } from 'vitest';
-import { getProps, setProps, releaseAllOwnedBy, countProps } from './propsRegistry.js';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import {
+  createPropsRegistry,
+  getProps,
+  setProps,
+  releaseAllOwnedBy,
+  countProps,
+} from './propsRegistry.js';
+import { resetSharedState } from './testing.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+beforeEach(resetSharedState);
+
+describe('createPropsRegistry', () => {
+  it('gives registries that do not see each other, or the shared default', () => {
+    const one = createPropsRegistry();
+    const two = createPropsRegistry();
+    const owner = {};
+
+    const key = one.setProps(owner, { a: 1 }, true);
+
+    expect(one.getProps(key)).toEqual({ a: 1 });
+    expect(two.getProps(key)).toBeUndefined();
+    expect(getProps(key)).toBeUndefined();
+    expect(one.countProps()).toBe(1);
+    expect(two.countProps()).toBe(0);
+    expect(countProps()).toBe(0);
+  });
+
+  it('releases an owner only from the registry that holds its keys', () => {
+    const one = createPropsRegistry();
+    const two = createPropsRegistry();
+    const owner = {};
+    const keyOne = one.setProps(owner, { a: 1 }, true);
+    const keyTwo = two.setProps(owner, { b: 2 }, true);
+
+    one.releaseAllOwnedBy(owner);
+
+    expect(one.getProps(keyOne)).toBeUndefined();
+    expect(two.getProps(keyTwo)).toEqual({ b: 2 });
+  });
+
+  it('forgets everything on clear()', () => {
+    const registry = createPropsRegistry();
+    const owner = {};
+    const key = registry.setProps(owner, { a: 1 }, true);
+
+    registry.clear();
+
+    expect(registry.getProps(key)).toBeUndefined();
+    expect(registry.countProps()).toBe(0);
+  });
+});
 
 describe('propsRegistry', () => {
   it('stores props under a generated key and returns them via getProps', () => {

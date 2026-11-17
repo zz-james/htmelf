@@ -14,53 +14,67 @@
 //     props: it resolves them once, on first connect, and holds on to them
 //   - a child must not rely on getProps(key) after its owner has
 //     re-rendered or disconnected - by then the key no longer resolves
+//
+// Each registry is independent: createPropsRegistry() gives a fresh one, and
+// the module-level functions below are bound to a shared default instance
+// that TinyBase uses unless told otherwise (see TinyBase.withContext).
 
-// key -> props
-const registry = new Map();
-// owner -> the keys it allocated, so releasing an owner touches only its own
-// keys instead of walking every key in the registry on every render
-const keysByOwner = new WeakMap();
+export function createPropsRegistry() {
+  // key -> props
+  const registry = new Map();
+  // owner -> the keys it allocated, so releasing an owner touches only its own
+  // keys instead of walking every key in the registry on every render
+  let keysByOwner = new WeakMap();
 
-export function getProps(key) {
-  return registry.get(key);
+  const getProps = (key) => registry.get(key);
+
+  // `owner` is the component instance whose functions in newProps get bound
+  // to it, so a callback runs with the right `this` no matter who ends up
+  // invoking it (e.g. a grandchild component holding the reference).
+  // newProps is left untouched; the registry stores a bound copy.
+  const setProps = (owner, newProps, returnKey = false) => {
+    if (newProps === null || typeof newProps !== 'object' || Array.isArray(newProps)) {
+      throw new TypeError('setProps expects a plain object of { key: value } props');
+    }
+
+    const props = Object.fromEntries(
+      Object.entries(newProps).map(([name, value]) => [
+        name,
+        typeof value === 'function' ? value.bind(owner) : value,
+      ])
+    );
+
+    const key = crypto.randomUUID();
+    registry.set(key, props);
+    if (!keysByOwner.has(owner)) {
+      keysByOwner.set(owner, new Set());
+    }
+    keysByOwner.get(owner).add(key);
+
+    return returnKey ? key : `key="${key}"`;
+  };
+
+  const releaseAllOwnedBy = (owner) => {
+    const keys = keysByOwner.get(owner);
+    if (!keys) {
+      return;
+    }
+    keys.forEach((key) => registry.delete(key));
+    keysByOwner.delete(owner);
+  };
+
+  // how many keys are currently allocated - for tests and leak checks
+  const countProps = () => registry.size;
+
+  // forget everything, for tests that share a registry
+  const clear = () => {
+    registry.clear();
+    keysByOwner = new WeakMap();
+  };
+
+  return { getProps, setProps, releaseAllOwnedBy, countProps, clear };
 }
 
-// `owner` is the component instance whose functions in newProps get bound
-// to it, so a callback runs with the right `this` no matter who ends up
-// invoking it (e.g. a grandchild component holding the reference).
-// newProps is left untouched; the registry stores a bound copy.
-export function setProps(owner, newProps, returnKey = false) {
-  if (newProps === null || typeof newProps !== 'object' || Array.isArray(newProps)) {
-    throw new TypeError('setProps expects a plain object of { key: value } props');
-  }
+export const defaultPropsRegistry = createPropsRegistry();
 
-  const props = Object.fromEntries(
-    Object.entries(newProps).map(([name, value]) => [
-      name,
-      typeof value === 'function' ? value.bind(owner) : value,
-    ])
-  );
-
-  const key = crypto.randomUUID();
-  registry.set(key, props);
-  if (!keysByOwner.has(owner)) {
-    keysByOwner.set(owner, new Set());
-  }
-  keysByOwner.get(owner).add(key);
-
-  return returnKey ? key : `key="${key}"`;
-}
-
-export function releaseAllOwnedBy(owner) {
-  const keys = keysByOwner.get(owner);
-  if (!keys) {
-    return;
-  }
-  keys.forEach((key) => registry.delete(key));
-  keysByOwner.delete(owner);
-}
-
-// how many keys are currently allocated - for tests and leak checks
-export function countProps() {
-  return registry.size;
-}
+export const { getProps, setProps, releaseAllOwnedBy, countProps } = defaultPropsRegistry;

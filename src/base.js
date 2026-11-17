@@ -1,10 +1,30 @@
 import { getAppStore } from './appStore.js';
 import { createCleanupScope } from './cleanupScope.js';
-import * as propsRegistry from './propsRegistry.js';
+import { defaultPropsRegistry } from './propsRegistry.js';
 
 export class TinyBase extends HTMLElement {
   key;
   cleanups = createCleanupScope();
+
+  // The store and props registry this component uses default to the shared
+  // ones. To use different ones, extend TinyBase.withContext({ store,
+  // propsRegistry }); parent and child must share the same registry, so make
+  // every component in a tree extend the same base.
+  static withContext({ store, propsRegistry } = {}) {
+    return class extends this {
+      getStore() {
+        return store ?? super.getStore();
+      }
+
+      get propsRegistry() {
+        return propsRegistry ?? super.propsRegistry;
+      }
+    };
+  }
+
+  get propsRegistry() {
+    return defaultPropsRegistry;
+  }
 
   constructor() {
     super();
@@ -59,7 +79,7 @@ export class TinyBase extends HTMLElement {
   }
 
   getProps(key) {
-    return propsRegistry.getProps(key);
+    return this.propsRegistry.getProps(key);
   }
 
   getStore() {
@@ -75,13 +95,13 @@ export class TinyBase extends HTMLElement {
   }
 
   setProps(newProps, returnKey = false) {
-    return propsRegistry.setProps(this, newProps, returnKey);
+    return this.propsRegistry.setProps(this, newProps, returnKey);
   }
 
   // for a component that replaces part of its markup outside render()
   // (e.g. a method that re-renders only one section)
   releaseOwnedProps() {
-    propsRegistry.releaseAllOwnedBy(this);
+    this.propsRegistry.releaseAllOwnedBy(this);
   }
 
   disconnectedCallback() {
