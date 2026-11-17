@@ -22,5 +22,13 @@
     "vite": "^8.3.8",
     "vitest": "^4.1.9"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zz-james/tinybase-element.git"
+  },
+  "homepage": "https://github.com/zz-james/tinybase-element#readme",
+  "bugs": {
+    "url": "https://github.com/zz-james/tinybase-element/issues"
+  }
 }
