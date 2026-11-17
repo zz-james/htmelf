@@ -79,6 +79,24 @@ const unsubscribe = store.subscribe(listener);
 
 `combineReducers({ a, b })` combines slice reducers. A listener that throws is logged and does not stop other listeners. A listener unsubscribed during dispatch is not called.
 
+## Using a different store or registry
+
+By default every component uses the shared app store and the shared props registry. To use others (for example in a test), build a base class with `TinyBase.withContext` and extend that:
+
+```js
+import { TinyBase, createStore, createPropsRegistry } from 'tinybase-element';
+
+const Base = TinyBase.withContext({
+  store: createStore(reducer),
+  propsRegistry: createPropsRegistry(),
+});
+class MyWidget extends Base {}
+```
+
+Both options are optional; whichever you leave out falls back to the shared one. A parent and its children must share a registry, so make every component in a tree extend the same `Base`. `countProps()` only counts the shared registry; use `registry.countProps()` for an injected one.
+
+In tests, `resetSharedState()` from `src/testing.js` (not part of the main entry point) clears the shared store and registry between tests.
+
 ## Demos
 
 **[Try the live demos](https://zz-james.github.io/tinybase-element/).** Three small demos live in `demos/`, each a single `main.js` you can read top to bottom:
