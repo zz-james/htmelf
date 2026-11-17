@@ -75,11 +75,13 @@ class Child extends TinyBase {
 const store = createStore(rootReducer, optionalInitialState);
 store.getState();
 store.dispatch(action);
-store.batch([a, b, c]); // one state change, one notification; nothing is committed if the reducer throws
+store.batch([a, b, c]); // one state change, one notification (none if nothing changed); nothing is committed if the reducer throws
 const unsubscribe = store.subscribe(listener);
 ```
 
-`combineReducers({ a, b })` combines slice reducers. A listener that throws is logged and does not stop other listeners. A listener unsubscribed during dispatch is not called.
+**Listeners are only notified when the state changes.** A `dispatch` or `batch` whose reducer returns the very same state object (an action it does not handle) notifies nobody. `combineReducers({ a, b })` combines slice reducers and returns the previous state object when no slice changed. This relies on the usual rule: a reducer returns a new value to change state and never mutates it in place, because an in-place change keeps the same reference and will not notify.
+
+A listener that throws is logged and does not stop other listeners. A listener unsubscribed during dispatch is not called.
 
 ## Using a different store or registry
 
