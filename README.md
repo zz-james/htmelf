@@ -1,6 +1,6 @@
 # tinybase-element
 
-A zero-dependency base class for vanilla web components, plus a tiny Redux-style store.
+A zero-dependency base class for vanilla web components, plus a tiny Redux-style store. **About 1.5 KB minified and gzipped** for the whole library.
 
 - `TinyBase` - a `HTMLElement` subclass with a render lifecycle, automatic cleanup and a way to pass objects and callbacks to child components through HTML attributes.
 - `createStore` / `combineReducers` - a minimal Redux clone (`getState`, `dispatch`, `batch`, `subscribe`).
@@ -8,6 +8,18 @@ A zero-dependency base class for vanilla web components, plus a tiny Redux-style
 - `propsRegistry` - the registry behind `setProps` / `getProps`.
 
 No runtime dependencies. `vite`, `jsdom` and `vitest` are dev-only.
+
+## Size
+
+The whole library, everything exported from `src/index.js`, bundled with Vite:
+
+| | Size |
+| --- | --- |
+| Minified | 3.9 KB |
+| Minified + gzip | **1.5 KB** |
+| Minified + brotli | 1.35 KB |
+
+There are no runtime dependencies, so this is the full cost of adding it. It is marked `"sideEffects": false`, so a bundler can drop what you do not import. Run `npm run size` to measure it yourself; the figures above are from that script.
 
 ## Usage
 
