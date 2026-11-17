@@ -1,0 +1,22 @@
+{
+  "name": "tinybase",
+  "version": "0.1.0",
+  "description": "Zero-dependency base class for vanilla web components, plus a tiny Redux-style store",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.9"
+  }
+}
