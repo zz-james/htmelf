@@ -1,6 +1,10 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
+  resolve: {
+    alias: { 'tinybase-element': fileURLToPath(new URL('./src/index.js', import.meta.url)) },
+  },
   test: {
     environment: 'jsdom',
     pool: 'forks',

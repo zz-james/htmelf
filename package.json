@@ -1,5 +1,5 @@
 {
-  "name": "tinybase",
+  "name": "tinybase-element",
   "version": "0.1.0",
   "description": "Zero-dependency base class for vanilla web components, plus a tiny Redux-style store",
   "type": "module",
@@ -13,10 +13,13 @@
   "sideEffects": false,
   "scripts": {
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "demos": "vite demos",
+    "build:demos": "vite build demos --base=./"
   },
   "devDependencies": {
     "jsdom": "^29.1.1",
+    "vite": "^8.3.8",
     "vitest": "^4.1.9"
   }
 }

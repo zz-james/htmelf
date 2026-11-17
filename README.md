@@ -1,4 +1,4 @@
-# TinyBase
+# tinybase-element
 
 A zero-dependency base class for vanilla web components, plus a tiny Redux-style store. Extracted from the ELiDDI project.
 
@@ -12,7 +12,7 @@ No runtime dependencies. `jsdom` and `vitest` are dev-only.
 ## Usage
 
 ```js
-import { TinyBase, createStore, setAppStore } from 'tinybase';
+import { TinyBase, createStore, setAppStore } from 'tinybase-element';
 
 // 1. register your store once, before any component connects
 const reducer = (state = { count: 0 }, action) =>
@@ -78,6 +78,21 @@ const unsubscribe = store.subscribe(listener);
 ```
 
 `combineReducers({ a, b })` combines slice reducers. A listener that throws is logged and does not stop other listeners. A listener unsubscribed during dispatch is not called.
+
+## Demos
+
+Three small demos live in `demos/`, each a single `main.js` you can read top to bottom:
+
+| Demo | Shows |
+| --- | --- |
+| `demos/todo` | a store and reducer, `subscribe` + `registerCleanup`, `setProps` callbacks to child components, localStorage persistence |
+| `demos/kanban` | `store.batch` for atomic moves, `renderOnce` so cards keep their state when moved in the DOM, `listen` |
+| `demos/stopwatch` | timers and document listeners torn down on disconnect, and a live `countProps()` leak check |
+
+```bash
+npm run demos        # dev server
+npm run build:demos  # static build into dist-demos/
+```
 
 ## Development
 
