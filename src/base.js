@@ -63,7 +63,15 @@ export class TinyBase extends HTMLElement {
   }
 
   getStore() {
-    return getAppStore();
+    const store = getAppStore();
+    if (!store) {
+      // thrown here, not left as an undefined that fails later, far from
+      // the cause, with "Cannot read properties of undefined"
+      throw new Error(
+        'TinyBase: no app store is registered. Call setAppStore(createStore(reducer)) before any component connects.'
+      );
+    }
+    return store;
   }
 
   setProps(newProps, returnKey = false) {
