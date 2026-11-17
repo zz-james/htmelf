@@ -41,7 +41,7 @@ tinybase-element is a base class for vanilla web components plus a minimal Redux
 
 ### Invariants to preserve
 
-- Props are resolved once, on first connect (`resolveProps`), and kept. On a DOM move the owner may already have released the key, so a reconnect must not clear `this.props`.
+- Props are resolved once, on first connect (`resolveProps`), and kept. On a DOM move the owner may already have released the key, so a reconnect must not clear `this.props`. `this.props` defaults to `{}`.
 - `static renderOnce = true` makes a component render on first connect only. Reconnects skip `render()` but still run the rest of `connectedCallback`. Subscriptions and listeners are torn down on disconnect, so they must be set up in `connectedCallback`, not in `render()`.
 - Anything that outlives a render goes through `registerCleanup()` or `listen()`, which `disconnectedCallback` runs. Subclasses that override `connectedCallback` or `disconnectedCallback` must call `super`.
 - Store: `batch()` commits nothing if the reducer throws. A throwing listener is logged and doesn't stop the others. A listener unsubscribed during dispatch is not called.
