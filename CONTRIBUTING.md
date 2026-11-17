@@ -9,6 +9,7 @@ npm install
 npm run test:run   # run the tests once
 npm test           # watch mode
 npm run demos      # run the demos in a dev server
+npm run size       # how big the library is on its own, minified and gzipped
 ```
 
 Node 20.19 or later (CI uses 22).

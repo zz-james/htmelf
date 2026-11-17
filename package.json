@@ -15,7 +15,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "demos": "vite demos",
-    "build:demos": "vite build demos --base=./"
+    "build:demos": "vite build demos --base=./",
+    "size": "node scripts/size.mjs"
   },
   "devDependencies": {
     "jsdom": "^29.1.1",
