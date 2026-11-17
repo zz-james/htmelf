@@ -101,7 +101,7 @@ In tests, `resetSharedState()` from `src/testing.js` (not part of the main entry
 
 ## Demos
 
-**[Try the live demos](https://zz-james.github.io/tinybase-element/).** Three small demos live in `demos/`, each a single `main.js` you can read top to bottom:
+**[Try the live demos](https://zz-james.github.io/tinybase-element/).** Three small demos live in `demos/`, each a handful of small files (one component per file, wired together in `main.js`) you can read top to bottom:
 
 | Demo | Shows |
 | --- | --- |
