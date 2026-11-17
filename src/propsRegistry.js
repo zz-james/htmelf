@@ -15,11 +15,14 @@
 //   - a child must not rely on getProps(key) after its owner has
 //     re-rendered or disconnected - by then the key no longer resolves
 
-// key -> { owner, props }
+// key -> props
 const registry = new Map();
+// owner -> the keys it allocated, so releasing an owner touches only its own
+// keys instead of walking every key in the registry on every render
+const keysByOwner = new WeakMap();
 
 export function getProps(key) {
-  return registry.get(key)?.props;
+  return registry.get(key);
 }
 
 // `owner` is the component instance whose functions in newProps get bound
@@ -39,17 +42,22 @@ export function setProps(owner, newProps, returnKey = false) {
   );
 
   const key = crypto.randomUUID();
-  registry.set(key, { owner, props });
+  registry.set(key, props);
+  if (!keysByOwner.has(owner)) {
+    keysByOwner.set(owner, new Set());
+  }
+  keysByOwner.get(owner).add(key);
 
   return returnKey ? key : `key="${key}"`;
 }
 
 export function releaseAllOwnedBy(owner) {
-  registry.forEach((entry, key) => {
-    if (entry.owner === owner) {
-      registry.delete(key);
-    }
-  });
+  const keys = keysByOwner.get(owner);
+  if (!keys) {
+    return;
+  }
+  keys.forEach((key) => registry.delete(key));
+  keysByOwner.delete(owner);
 }
 
 // how many keys are currently allocated - for tests and leak checks

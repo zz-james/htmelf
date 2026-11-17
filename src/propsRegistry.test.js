@@ -74,4 +74,47 @@ describe('propsRegistry', () => {
     expect(countProps()).toBe(before + 1);
     releaseAllOwnedBy(other);
   });
+
+  it('releasing an owner that has no keys, or twice, does nothing', () => {
+    const owner = {};
+    const before = countProps();
+    setProps(owner, { a: 1 }, true);
+
+    releaseAllOwnedBy({});
+    releaseAllOwnedBy(owner);
+    releaseAllOwnedBy(owner);
+
+    expect(countProps()).toBe(before);
+  });
+
+  it('lets an owner allocate again after it was released', () => {
+    const owner = {};
+    setProps(owner, { a: 1 }, true);
+    releaseAllOwnedBy(owner);
+
+    const key = setProps(owner, { b: 2 }, true);
+    expect(getProps(key)).toEqual({ b: 2 });
+
+    releaseAllOwnedBy(owner);
+    expect(getProps(key)).toBeUndefined();
+  });
+
+  // the cost of releasing one owner must not grow with other owners' keys:
+  // it may only touch its own keys, never walk the whole registry
+  it('releases an owner without iterating the registry', () => {
+    const bystanders = Array.from({ length: 200 }, () => ({}));
+    bystanders.forEach((bystander) => setProps(bystander, { x: 1 }, true));
+    const owner = {};
+    const key = setProps(owner, { a: 1 }, true);
+    const iterations = ['forEach', 'keys', 'values', 'entries', Symbol.iterator].map((method) =>
+      vi.spyOn(Map.prototype, method)
+    );
+
+    releaseAllOwnedBy(owner);
+
+    iterations.forEach((spy) => expect(spy).not.toHaveBeenCalled());
+    expect(getProps(key)).toBeUndefined();
+    vi.restoreAllMocks();
+    bystanders.forEach(releaseAllOwnedBy);
+  });
 });
