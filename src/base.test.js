@@ -277,4 +277,26 @@ describe('TinyBase.getStore', () => {
     expect(el.getStore()).toBe(store);
     expect(el.getStore().getState()).toBe(5);
   });
+
+  describe('when no store is registered', () => {
+    beforeEach(() => setAppStore(undefined));
+
+    it('throws an error that names setAppStore', () => {
+      const el = document.createElement('tb-harness');
+
+      expect(() => el.getStore()).toThrow(/setAppStore/);
+    });
+
+    it('fails at the first getStore() call a component makes on connect', () => {
+      class NeedsStore extends TinyBase {
+        render() {
+          this.textContent = String(this.getStore().getState());
+        }
+      }
+      define('tb-needs-store', NeedsStore);
+      const el = document.createElement('tb-needs-store');
+
+      expect(() => el.connectedCallback()).toThrow(/no app store is registered/i);
+    });
+  });
 });

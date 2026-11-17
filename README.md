@@ -1,13 +1,13 @@
 # tinybase-element
 
-A zero-dependency base class for vanilla web components, plus a tiny Redux-style store. Extracted from the ELiDDI project.
+A zero-dependency base class for vanilla web components, plus a tiny Redux-style store.
 
 - `TinyBase` - a `HTMLElement` subclass with a render lifecycle, automatic cleanup and a way to pass objects and callbacks to child components through HTML attributes.
 - `createStore` / `combineReducers` - a minimal Redux clone (`getState`, `dispatch`, `batch`, `subscribe`).
-- `setAppStore` / `getAppStore` - holds the single store that `TinyBase#getStore()` returns.
+- `setAppStore` / `getAppStore` - holds the single store that `TinyBase#getStore()` returns. `getStore()` throws a clear error if no store has been registered.
 - `propsRegistry` - the registry behind `setProps` / `getProps`.
 
-No runtime dependencies. `jsdom` and `vitest` are dev-only.
+No runtime dependencies. `vite`, `jsdom` and `vitest` are dev-only.
 
 ## Usage
 
@@ -100,4 +100,6 @@ npm run build:demos  # static build into dist-demos/
 npm install
 npm test          # watch mode
 npm run test:run  # run once
+npm run demos        # demos dev server
+npm run build:demos  # static demos build into dist-demos/
 ```
