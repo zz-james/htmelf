@@ -37,7 +37,7 @@ tinybase-element is a base class for vanilla web components plus a minimal Redux
 - `src/appStore.js` - `setAppStore` registers a single global store, which `TinyBase#getStore()` returns.
 - `src/store.js` + `src/subscriptions.js` + `src/combineReducers.js` - the Redux clone. `createStore` owns state, `dispatch` and `batch` and delegates listener bookkeeping to `createSubscriptions()` (snapshot iteration, skip-if-unsubscribed-mid-notify, error isolation). `store.js` re-exports `combineReducers`.
 - `src/index.js` - the public exports (`TinyBase`, store functions, `setAppStore`/`getAppStore`, and the props registry functions including `countProps`).
-- `demos/` - three small apps (`todo`, `kanban`, `stopwatch`), each with `main.js`, `reducer.js` and tests that `vitest` picks up. `demos/vite.config.js` aliases `tinybase-element` to `src/index.js`, so demos import the package by name. A new demo needs an entry in that config's `rollupOptions.input` and a link from `demos/index.html`.
+- `demos/` - three small apps (`todo`, `kanban`, `stopwatch`), each with one component per file, a `reducer.js`, a `main.js` that sets the store and then defines the elements, and tests that `vitest` picks up. Define elements only after `setAppStore`: defining upgrades markup already on the page. `demos/vite.config.js` aliases `tinybase-element` to `src/index.js`, so demos import the package by name. A new demo needs an entry in that config's `rollupOptions.input` and a link from `demos/index.html`.
 
 ### Invariants to preserve
 
