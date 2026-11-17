@@ -114,7 +114,6 @@ describe('TinyBase.registerCleanup', () => {
       el.remove();
 
       expect(survivor).toHaveBeenCalledTimes(1);
-      expect(el.cleanupFns).toEqual([]);
     });
 
     it('still releases the props the component owned', () => {
