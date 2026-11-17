@@ -1,9 +1,10 @@
 import { getAppStore } from './appStore.js';
+import { createCleanupScope } from './cleanupScope.js';
 import * as propsRegistry from './propsRegistry.js';
 
 export class TinyBase extends HTMLElement {
   key;
-  cleanupFns = [];
+  cleanups = createCleanupScope();
 
   constructor() {
     super();
@@ -27,13 +28,12 @@ export class TinyBase extends HTMLElement {
   // Listeners on elements this component's own render() creates may be
   // bound directly in render(): they are discarded with that markup.
   registerCleanup(cleanupFn) {
-    this.cleanupFns.push(cleanupFn);
+    this.cleanups.add(cleanupFn);
   }
 
   // addEventListener, removed again when this component disconnects
   listen(target, type, handler, options) {
-    target.addEventListener(type, handler, options);
-    this.registerCleanup(() => target.removeEventListener(type, handler, options));
+    this.cleanups.listen(target, type, handler, options);
   }
 
   // A component sets `static renderOnce = true` when its markup must survive
@@ -78,17 +78,7 @@ export class TinyBase extends HTMLElement {
 
   disconnectedCallback() {
     this.releaseOwnedProps();
-    // take the list first so it is emptied even if a cleanup throws, and run
-    // every cleanup: one failing must not leak the ones registered after it
-    const cleanupFns = this.cleanupFns;
-    this.cleanupFns = [];
-    cleanupFns.forEach((cleanupFn) => {
-      try {
-        cleanupFn();
-      } catch (error) {
-        console.error('A cleanup function threw:', error);
-      }
-    });
+    this.cleanups.run();
   }
 
   render() {

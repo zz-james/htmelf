@@ -32,6 +32,7 @@ CI (`.github/workflows/ci.yml`) runs `npm run test:run` then `npm run build:demo
 tinybase-element is a base class for vanilla web components plus a minimal Redux-style store. See `README.md` for usage and the public API. The parts below span several files.
 
 - `src/base.js` - the `TinyBase` class (extends `HTMLElement`). Its constructor wraps `this.render` so every call, including direct calls from subclasses, first runs `releaseOwnedProps()`. Don't bypass that wrapper.
+- `src/cleanupScope.js` - `createCleanupScope()`: the list of teardown functions behind `registerCleanup` / `listen`. `run()` empties the list first and isolates each function, so one that throws can't stop the rest. Each `TinyBase` holds one as `this.cleanups` and runs it on disconnect.
 - `src/propsRegistry.js` - a module-level `Map` of `key -> { owner, props }`. `TinyBase#setProps`/`getProps`/`releaseOwnedProps` delegate to it. Props are passed to child components through a `key="<uuid>"` HTML attribute. The component that calls `setProps` owns the key. A child never frees a key it was given.
 - `src/appStore.js` + `src/store.js` - `setAppStore` registers a single global store, which `TinyBase#getStore()` returns. `createStore` and `combineReducers` are the Redux clone.
 - `src/index.js` - the public exports (`TinyBase`, store functions, `setAppStore`/`getAppStore`, and the props registry functions including `countProps`).
