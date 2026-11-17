@@ -10,7 +10,7 @@ export class TinyBase extends HTMLElement {
     // every render() replaces this component's previous markup, so first
     // free the props it handed out to that markup (see propsRegistry.js).
     // Wrapped here, once, so subclasses can keep calling this.render()
-    // directly (e.g. DetailsPanel.reset()) without remembering to release
+    // directly (e.g. from a reset method) without remembering to release
     const renderMarkup = this.render;
     this.render = (...args) => {
       this.releaseOwnedProps();
@@ -23,7 +23,7 @@ export class TinyBase extends HTMLElement {
   // disconnectedCallback runs:
   //   - listeners on `this`, `document` or `window`: use listen()
   //   - timers, store subscriptions, helper objects that own timers
-  //     (e.g. EntryResizeController.destroy): registerCleanup()
+  //     (e.g. a controller with a destroy() method): registerCleanup()
   // Listeners on elements this component's own render() creates may be
   // bound directly in render(): they are discarded with that markup.
   registerCleanup(cleanupFn) {
@@ -71,7 +71,7 @@ export class TinyBase extends HTMLElement {
   }
 
   // for a component that replaces part of its markup outside render()
-  // (e.g. ActivityPicker.renderAccordion())
+  // (e.g. a method that re-renders only one section)
   releaseOwnedProps() {
     propsRegistry.releaseAllOwnedBy(this);
   }
