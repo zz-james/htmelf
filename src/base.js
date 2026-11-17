@@ -62,6 +62,17 @@ export class TinyBase extends HTMLElement {
     this.cleanups.listen(target, type, handler, options);
   }
 
+  // Subscribe to the app store, and unsubscribe when this component
+  // disconnects. The listener defaults to re-rendering, and the returned
+  // function stops it early. Like any subscription it must be set up in
+  // connectedCallback, since disconnect tears it down; before or after
+  // super.connectedCallback() both work, the first render happens there.
+  watchStore(listener = () => this.render()) {
+    const unsubscribe = this.getStore().subscribe(listener);
+    this.registerCleanup(unsubscribe);
+    return unsubscribe;
+  }
+
   // A component sets `static renderOnce = true` when its markup must survive
   // a DOM move: it renders on first connect only, and a reconnect keeps that
   // markup (with whatever state it holds), re-running just the rest of its

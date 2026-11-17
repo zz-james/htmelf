@@ -38,8 +38,8 @@ customElements.define('todo-item', TodoItem);
 // --- <todo-list>: subscribes to the store and re-renders the items ----------
 class TodoList extends TinyBase {
   connectedCallback() {
-    // the unsubscribe function goes to registerCleanup, so disconnect tears it down
-    this.registerCleanup(this.getStore().subscribe(() => this.render()));
+    // watchStore re-renders on every change and unsubscribes on disconnect
+    this.watchStore();
     super.connectedCallback();
   }
 

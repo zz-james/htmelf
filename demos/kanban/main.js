@@ -47,7 +47,7 @@ class KanbanBoard extends TinyBase {
     super.connectedCallback();
     // one key shared by every card; the board owns it and frees it on disconnect
     this.cardProps = this.setProps({ onMove: (id, dir) => this.stepCard(id, dir) }, true);
-    this.registerCleanup(this.getStore().subscribe(() => this.sync()));
+    this.watchStore(() => this.sync());
 
     // listeners go through listen() so disconnect removes them
     this.listen(this, 'dragover', (event) => event.preventDefault());

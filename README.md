@@ -23,7 +23,7 @@ setAppStore(createStore(reducer));
 class CounterButton extends TinyBase {
   connectedCallback() {
     super.connectedCallback();
-    this.registerCleanup(this.getStore().subscribe(() => this.render()));
+    this.watchStore(); // re-render on every store change; unsubscribes on disconnect
   }
 
   render() {
@@ -38,6 +38,7 @@ customElements.define('counter-button', CounterButton);
 
 - `connectedCallback` resolves props, then calls `render()`. It re-renders on every reconnect, unless the class sets `static renderOnce = true`, in which case it renders on first connect only and keeps its markup across DOM moves.
 - Anything that outlives a single render (store subscriptions, timers) is set up in `connectedCallback` and torn down with `registerCleanup(fn)`. `disconnectedCallback` runs those functions.
+- `watchStore(listener = () => this.render())` subscribes to the store and registers the unsubscribe for you. It returns the unsubscribe function, for stopping early. Call it from `connectedCallback`, before or after `super.connectedCallback()`.
 - `listen(target, type, handler, options)` is `addEventListener` that is removed again on disconnect. Use it for listeners on `this`, `document` or `window`.
 - Listeners on elements your own `render()` creates can be bound directly: they go away with that markup.
 - If you override `connectedCallback` or `disconnectedCallback`, call `super`.

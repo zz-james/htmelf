@@ -7,7 +7,7 @@ setAppStore(store);
 // --- <stopwatch-display> / <stopwatch-laps>: subscribe, render, clean up ----
 class StopwatchDisplay extends TinyBase {
   connectedCallback() {
-    this.registerCleanup(this.getStore().subscribe(() => this.render()));
+    this.watchStore();
     super.connectedCallback();
   }
   render() {
@@ -18,7 +18,7 @@ customElements.define('stopwatch-display', StopwatchDisplay);
 
 class StopwatchLaps extends TinyBase {
   connectedCallback() {
-    this.registerCleanup(this.getStore().subscribe(() => this.render()));
+    this.watchStore();
     super.connectedCallback();
   }
   render() {
@@ -56,7 +56,7 @@ class StopwatchTimer extends TinyBase {
         interval = undefined;
       }
     };
-    this.registerCleanup(store.subscribe(sync));
+    this.watchStore(sync);
     sync(); // the store outlives this element, so it may already be running
 
     const toggleRunning = () => store.dispatch({ type: store.getState().running ? 'stop' : 'start' });
