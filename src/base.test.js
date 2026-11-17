@@ -163,6 +163,39 @@ describe('TinyBase.listen', () => {
 });
 
 describe('TinyBase props', () => {
+  it('starts with empty props, and keeps them when the element has no key', () => {
+    const el = document.createElement('tb-harness');
+    expect(el.props).toEqual({});
+
+    document.body.appendChild(el);
+
+    expect(el.props).toEqual({});
+  });
+
+  it('keeps empty props when the key no longer resolves', () => {
+    const el = document.createElement('tb-harness');
+    el.setAttribute('key', 'released-or-never-allocated');
+
+    document.body.appendChild(el);
+
+    expect(el.props).toEqual({});
+  });
+
+  it('lets a child that reads its props render without a key', () => {
+    class Optional extends TinyBase {
+      render() {
+        const { label = 'default' } = this.props;
+        this.textContent = label;
+      }
+    }
+    define('tb-optional-props', Optional);
+
+    const el = document.createElement('tb-optional-props');
+    document.body.appendChild(el);
+
+    expect(el.textContent).toBe('default');
+  });
+
   it('hands a child its parent callbacks, bound to the parent', () => {
     const parent = document.createElement('tb-parent');
     document.body.appendChild(parent);
@@ -249,6 +282,15 @@ describe('TinyBase props', () => {
 });
 
 describe('TinyBase render lifecycle', () => {
+  it('has not rendered before it connects, and has after', () => {
+    const el = document.createElement('tb-render-once');
+    expect(el.hasRendered).toBe(false);
+
+    document.body.appendChild(el);
+
+    expect(el.hasRendered).toBe(true);
+  });
+
   it('renders on connect and again on every reconnect by default', () => {
     const parent = document.createElement('tb-parent');
     document.body.appendChild(parent);

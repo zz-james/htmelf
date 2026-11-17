@@ -3,7 +3,13 @@ import { createCleanupScope } from './cleanupScope.js';
 import { defaultPropsRegistry } from './propsRegistry.js';
 
 export class TinyBase extends HTMLElement {
+  // the value of the "key" attribute the parent's setProps() gave this element
   key;
+  // what the parent handed down; {} when there is no key or it no longer
+  // resolves, so render() can destructure it without a guard
+  props = {};
+  // true once render() has run, so renderOnce can skip later connects
+  hasRendered = false;
   cleanups = createCleanupScope();
 
   // The store and props registry this component uses default to the shared

@@ -63,6 +63,7 @@ class Child extends TinyBase {
 - `setProps(obj)` returns a `key="<uuid>"` attribute string. `setProps(obj, true)` returns the bare key.
 - Functions in `obj` are bound to the parent, so `this` is correct wherever they are called.
 - **Ownership:** the component that calls `setProps` owns the key. It is freed automatically when that component re-renders or disconnects. A child never frees the key it was given, so a child that is moved in the DOM keeps its props.
+- `this.props` is `{}` for an element that has no `key` (or whose key no longer resolves), so a child can destructure it safely.
 - A child must not call `getProps(key)` after its owner has re-rendered; the key no longer resolves.
 - `countProps()` returns the number of live keys, for leak checks in tests.
 - To replace part of your markup outside `render()`, call `releaseOwnedProps()` first.
