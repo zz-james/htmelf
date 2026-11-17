@@ -211,3 +211,112 @@ describe('combineReducers', () => {
     expect(state).toEqual({ a: 6, b: 1 });
   });
 });
+
+describe('notifying only on change', () => {
+  const todos = (state = [], action) => (action.type === 'ADD' ? [...state, action.item] : state);
+  const flag = (state = false, action) => (action.type === 'FLIP' ? !state : state);
+
+  it('does not notify when the reducer returns the same state', () => {
+    const store = createStore(counter);
+    const listener = vi.fn();
+    store.subscribe(listener);
+
+    store.dispatch({ type: 'UNKNOWN' });
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('notifies when the reducer returns a new state', () => {
+    const store = createStore(counter);
+    const listener = vi.fn();
+    store.subscribe(listener);
+
+    store.dispatch({ type: 'INC' });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not notify for a batch that changes nothing, and notifies once for one that does', () => {
+    const store = createStore(counter);
+    const listener = vi.fn();
+    store.subscribe(listener);
+
+    store.batch([{ type: 'UNKNOWN' }, { type: 'OTHER' }]);
+    expect(listener).not.toHaveBeenCalled();
+
+    store.batch([{ type: 'UNKNOWN' }, { type: 'INC' }, { type: 'INC' }]);
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not notify for an action no slice of a combined reducer handles', () => {
+    const store = createStore(combineReducers({ todos, flag }));
+    const listener = vi.fn();
+    store.subscribe(listener);
+    const before = store.getState();
+
+    store.dispatch({ type: 'UNKNOWN' });
+
+    expect(listener).not.toHaveBeenCalled();
+    expect(store.getState()).toBe(before);
+  });
+
+  it('notifies when any slice changes, leaving the other slices untouched', () => {
+    const store = createStore(combineReducers({ todos, flag }));
+    const listener = vi.fn();
+    store.subscribe(listener);
+    const before = store.getState();
+
+    store.dispatch({ type: 'ADD', item: 'x' });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(store.getState()).not.toBe(before);
+    expect(store.getState().todos).toEqual(['x']);
+    expect(store.getState().flag).toBe(before.flag);
+  });
+});
+
+describe('combineReducers: reference stability', () => {
+  const same = (state = { n: 0 }) => state;
+  const bump = (state = 0, action) => (action.type === 'BUMP' ? state + 1 : state);
+
+  it('returns the previous state object when no slice changed', () => {
+    const reducer = combineReducers({ a: same, b: bump });
+    const first = reducer(undefined, { type: 'INIT' });
+
+    expect(reducer(first, { type: 'UNKNOWN' })).toBe(first);
+  });
+
+  it('returns a new object when a slice changed, reusing the unchanged slices', () => {
+    const reducer = combineReducers({ a: same, b: bump });
+    const first = reducer(undefined, { type: 'INIT' });
+
+    const next = reducer(first, { type: 'BUMP' });
+
+    expect(next).not.toBe(first);
+    expect(next.b).toBe(1);
+    expect(next.a).toBe(first.a);
+  });
+
+  it('builds the full state the first time, even when no slice reacts', () => {
+    const reducer = combineReducers({ a: same, b: bump });
+
+    expect(reducer(undefined, { type: 'INIT' })).toEqual({ a: { n: 0 }, b: 0 });
+  });
+
+  it('returns a new object when the previous state has a key the reducers do not', () => {
+    const reducer = combineReducers({ b: bump });
+    const previous = { b: 0, stale: true };
+
+    const next = reducer(previous, { type: 'UNKNOWN' });
+
+    expect(next).not.toBe(previous);
+    expect(next).toEqual({ b: 0 });
+  });
+
+  it('returns a new object when the previous state is missing a key', () => {
+    const reducer = combineReducers({ a: () => undefined, b: bump });
+    const previous = { b: 0 };
+
+    expect(reducer(previous, { type: 'UNKNOWN' })).not.toBe(previous);
+  });
+});
