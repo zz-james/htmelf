@@ -81,7 +81,7 @@ const unsubscribe = store.subscribe(listener);
 
 ## Demos
 
-Three small demos live in `demos/`, each a single `main.js` you can read top to bottom:
+**[Try the live demos](https://zz-james.github.io/tinybase-element/).** Three small demos live in `demos/`, each a single `main.js` you can read top to bottom:
 
 | Demo | Shows |
 | --- | --- |
