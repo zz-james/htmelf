@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TinyBase } from './base.js';
 import { countProps } from './propsRegistry.js';
 import { createStore } from './store.js';
@@ -72,6 +72,64 @@ describe('TinyBase.registerCleanup', () => {
 
     expect(a).toHaveBeenCalledTimes(1);
     expect(b).toHaveBeenCalledTimes(1);
+  });
+
+  describe('when a cleanup throws', () => {
+    let errorSpy;
+    beforeEach(() => {
+      errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+    afterEach(() => errorSpy.mockRestore());
+
+    it('still runs the cleanups registered after it, and reports the error', () => {
+      const el = document.createElement('tb-harness');
+      document.body.appendChild(el);
+      const failure = new Error('cleanup failed');
+      const before = vi.fn();
+      const after = vi.fn();
+      el.registerCleanup(before);
+      el.registerCleanup(() => {
+        throw failure;
+      });
+      el.registerCleanup(after);
+
+      el.remove();
+
+      expect(before).toHaveBeenCalledTimes(1);
+      expect(after).toHaveBeenCalledTimes(1);
+      expect(errorSpy).toHaveBeenCalledWith(expect.any(String), failure);
+    });
+
+    it('does not re-run old cleanups after a reconnect', () => {
+      const el = document.createElement('tb-harness');
+      document.body.appendChild(el);
+      const survivor = vi.fn();
+      el.registerCleanup(() => {
+        throw new Error('cleanup failed');
+      });
+      el.registerCleanup(survivor);
+
+      el.remove();
+      document.body.appendChild(el);
+      el.remove();
+
+      expect(survivor).toHaveBeenCalledTimes(1);
+      expect(el.cleanupFns).toEqual([]);
+    });
+
+    it('still releases the props the component owned', () => {
+      const start = countProps();
+      const parent = document.createElement('tb-parent');
+      document.body.appendChild(parent);
+      parent.registerCleanup(() => {
+        throw new Error('cleanup failed');
+      });
+      expect(countProps()).toBeGreaterThan(start);
+
+      parent.remove();
+
+      expect(countProps()).toBe(start);
+    });
   });
 });
 
