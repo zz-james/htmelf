@@ -411,3 +411,94 @@ describe('TinyBase.withContext', () => {
     expect(registry.countProps()).toBe(0);
   });
 });
+
+describe('TinyBase.watchStore', () => {
+  const counterReducer = (state = 0, action) => (action.type === 'inc' ? state + 1 : state);
+
+  // subscribes in connectedCallback, as the lifecycle rule asks
+  class Watcher extends TinyBase {
+    renders = 0;
+    seen = 0;
+    connectedCallback() {
+      super.connectedCallback();
+      this.watchStore();
+    }
+    render() {
+      this.renders++;
+      this.seen = this.getStore().getState();
+    }
+  }
+  define('tb-watcher', Watcher);
+
+  it('re-renders when the store changes, by default', () => {
+    const store = createStore(counterReducer);
+    setAppStore(store);
+    const el = document.createElement('tb-watcher');
+    document.body.appendChild(el);
+    expect(el.renders).toBe(1);
+
+    store.dispatch({ type: 'inc' });
+
+    expect(el.renders).toBe(2);
+    expect(el.seen).toBe(1);
+  });
+
+  it('calls a given listener instead of render()', () => {
+    const store = createStore(counterReducer);
+    setAppStore(store);
+    const el = document.createElement('tb-harness');
+    document.body.appendChild(el);
+    const listener = vi.fn();
+    el.watchStore(listener);
+
+    store.dispatch({ type: 'inc' });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops listening on disconnect', () => {
+    const store = createStore(counterReducer);
+    setAppStore(store);
+    const el = document.createElement('tb-watcher');
+    document.body.appendChild(el);
+
+    el.remove();
+    store.dispatch({ type: 'inc' });
+
+    expect(el.renders).toBe(1);
+  });
+
+  it('subscribes once per connect: a reconnect neither doubles nor loses the subscription', () => {
+    const store = createStore(counterReducer);
+    setAppStore(store);
+    const el = document.createElement('tb-watcher');
+    document.body.appendChild(el);
+    el.remove();
+    document.body.appendChild(el);
+    const rendersAfterReconnect = el.renders;
+
+    store.dispatch({ type: 'inc' });
+
+    expect(el.renders).toBe(rendersAfterReconnect + 1);
+  });
+
+  it('returns an unsubscribe function for stopping early', () => {
+    const store = createStore(counterReducer);
+    setAppStore(store);
+    const el = document.createElement('tb-harness');
+    document.body.appendChild(el);
+    const listener = vi.fn();
+
+    const unsubscribe = el.watchStore(listener);
+    unsubscribe();
+    store.dispatch({ type: 'inc' });
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('fails clearly when no store is registered', () => {
+    const el = document.createElement('tb-harness');
+
+    expect(() => el.watchStore()).toThrow(/setAppStore/);
+  });
+});
