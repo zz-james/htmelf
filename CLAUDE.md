@@ -8,13 +8,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm install
 npm test                          # vitest, watch mode
 npm run test:run                  # run once
-npx vitest run src/store.test.js  # single test file
+npx vitest run tests/store.test.js  # single test file
 npx vitest run -t "name"          # tests matching a name
 npm run demos                     # vite dev server for demos/
 npm run build:demos               # static build into dist-demos/ (gitignored)
 ```
 
-Tests run under jsdom (see `vitest.config.js`). There is no lint step and the library has no build: the package (`tinybase-element`, MIT) ships `src/` as plain ES modules (`"type": "module"`, entry `src/index.js`). `vite`, `jsdom` and `vitest` are dev-only. `package.json` must never gain `dependencies`.
+Tests run under jsdom (see `vitest.config.js`). Unit tests for `src/` live in `tests/` (one `<module>.test.js` per module); each demo keeps its tests beside it in `demos/`. There is no lint step and the library has no build: the package (`tinybase-element`, MIT) ships `src/` as plain ES modules (`"type": "module"`, entry `src/index.js`). `vite`, `jsdom` and `vitest` are dev-only. `package.json` must never gain `dependencies`.
 
 CI (`.github/workflows/ci.yml`) runs `npm run test:run` then `npm run build:demos` on PRs and pushes to `main`. `deploy-demos.yml` publishes `dist-demos/` to GitHub Pages from `main`. Run both locally before opening a PR. `CONTRIBUTING.md` has the contribution rules.
 

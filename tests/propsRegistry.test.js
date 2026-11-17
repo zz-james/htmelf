@@ -5,8 +5,8 @@ import {
   setProps,
   releaseAllOwnedBy,
   countProps,
-} from './propsRegistry.js';
-import { resetSharedState } from './testing.js';
+} from '../src/propsRegistry.js';
+import { resetSharedState } from '../src/testing.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 

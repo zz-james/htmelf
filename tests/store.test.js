@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { createStore, combineReducers } from './store.js';
+import { createStore, combineReducers } from '../src/store.js';
 
 const counter = (state = 0, action) => (action.type === 'INC' ? state + 1 : state);
 
