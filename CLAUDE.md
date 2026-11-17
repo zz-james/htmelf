@@ -12,6 +12,7 @@ npx vitest run tests/store.test.js  # single test file
 npx vitest run -t "name"          # tests matching a name
 npm run demos                     # vite dev server for demos/
 npm run build:demos               # static build into dist-demos/ (gitignored)
+npm run size                      # bundled/minified/gzip/brotli size of src/index.js alone (scripts/size.mjs)
 ```
 
 Tests run under jsdom (see `vitest.config.js`). Unit tests for `src/` live in `tests/` (one `<module>.test.js` per module); each demo keeps its tests beside it in `demos/`. There is no lint step and the library has no build: the package (`tinybase-element`, MIT) ships `src/` as plain ES modules (`"type": "module"`, entry `src/index.js`). `vite`, `jsdom` and `vitest` are dev-only. `package.json` must never gain `dependencies`.
