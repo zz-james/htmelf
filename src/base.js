@@ -78,8 +78,17 @@ export class TinyBase extends HTMLElement {
 
   disconnectedCallback() {
     this.releaseOwnedProps();
-    this.cleanupFns.forEach((cleanupFn) => cleanupFn());
+    // take the list first so it is emptied even if a cleanup throws, and run
+    // every cleanup: one failing must not leak the ones registered after it
+    const cleanupFns = this.cleanupFns;
     this.cleanupFns = [];
+    cleanupFns.forEach((cleanupFn) => {
+      try {
+        cleanupFn();
+      } catch (error) {
+        console.error('A cleanup function threw:', error);
+      }
+    });
   }
 
   render() {
