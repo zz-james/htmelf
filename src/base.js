@@ -1,5 +1,5 @@
-import { getAppStore } from './appStore';
-import * as propsRegistry from './propsRegistry';
+import { getAppStore } from './appStore.js';
+import * as propsRegistry from './propsRegistry.js';
 
 export class TinyBase extends HTMLElement {
   key;

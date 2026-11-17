@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { TinyBase } from './base';
-import { countProps } from './propsRegistry';
-import { createStore } from './store';
-import { setAppStore } from './appStore';
+import { TinyBase } from './base.js';
+import { countProps } from './propsRegistry.js';
+import { createStore } from './store.js';
+import { setAppStore } from './appStore.js';
 
 function define(name, cls) {
   if (!customElements.get(name)) {
