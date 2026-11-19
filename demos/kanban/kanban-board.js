@@ -1,9 +1,9 @@
-import { TinyBase } from 'tinybase-element';
+import { Htmelf } from 'htmelf';
 import { moveCard, COLUMNS } from './reducer.js';
 import { readDrop } from './drop.js';
 import { createCardElements } from './card-elements.js';
 
-export class KanbanBoard extends TinyBase {
+export class KanbanBoard extends Htmelf {
   static renderOnce = true;
   cardProps; // one key shared by every card; the board owns it
   cards = createCardElements(() => this.cardProps); // survives a reconnect, like the markup

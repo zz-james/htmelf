@@ -1,4 +1,4 @@
-import { createStore, setAppStore } from 'tinybase-element';
+import { createStore, setAppStore } from 'htmelf';
 import { kanbanReducer } from './reducer.js';
 import { KanbanCard } from './kanban-card.js';
 import { KanbanBoard } from './kanban-board.js';

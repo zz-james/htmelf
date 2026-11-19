@@ -3,10 +3,10 @@
 // template string, which can otherwise only carry primitive attribute
 // values. The parent calls setProps(...) while building its template and
 // embeds the returned key="..." attribute; the child looks itself up via
-// getProps(key) once connected (see TinyBase.connectedCallback).
+// getProps(key) once connected (see Htmelf.connectedCallback).
 //
 // Ownership: the component that allocates a key owns it, and is the only
-// thing that frees it. TinyBase releases everything a component allocated
+// thing that frees it. Htmelf releases everything a component allocated
 // when it renders again (the old markup is being replaced) and when it
 // disconnects. A child never deletes the key it was given, so:
 //   - markup built but never mounted is still freed, by its owner
@@ -17,7 +17,7 @@
 //
 // Each registry is independent: createPropsRegistry() gives a fresh one, and
 // the module-level functions below are bound to a shared default instance
-// that TinyBase uses unless told otherwise (see TinyBase.withContext).
+// that Htmelf uses unless told otherwise (see Htmelf.withContext).
 
 export function createPropsRegistry() {
   // key -> props

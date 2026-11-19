@@ -1,4 +1,4 @@
-import { createStore } from 'tinybase-element';
+import { createStore } from 'htmelf';
 
 // A store seeded from, and saved to, localStorage. Storage that is missing,
 // full or holds bad JSON never breaks the app: it just starts empty, or the

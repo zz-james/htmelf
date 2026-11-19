@@ -1,4 +1,4 @@
-import { countProps } from 'tinybase-element';
+import { countProps } from 'htmelf';
 
 // The page around the timer: a button that mounts and unmounts it, and a live
 // readout of countProps(), which returns to 0 when the timer is unmounted.

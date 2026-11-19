@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createStore } from 'tinybase-element';
+import { createStore } from 'htmelf';
 import { stopwatchReducer } from './reducer.js';
 import { createTicker } from './ticker.js';
 

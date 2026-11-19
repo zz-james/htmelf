@@ -1,5 +1,5 @@
 {
-  "name": "tinybase-element",
+  "name": "htmelf",
   "version": "0.1.0",
   "description": "Zero-dependency base class for vanilla web components, plus a tiny Redux-style store",
   "type": "module",
@@ -26,10 +26,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zz-james/tinybase-element.git"
+    "url": "git+https://github.com/zz-james/htmelf.git"
   },
-  "homepage": "https://github.com/zz-james/tinybase-element#readme",
+  "homepage": "https://github.com/zz-james/htmelf#readme",
   "bugs": {
-    "url": "https://github.com/zz-james/tinybase-element/issues"
+    "url": "https://github.com/zz-james/htmelf/issues"
   }
 }

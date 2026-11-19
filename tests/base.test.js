@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { TinyBase } from '../src/base.js';
+import { Htmelf } from '../src/base.js';
 import { countProps } from '../src/propsRegistry.js';
 import { createStore } from '../src/store.js';
 import { setAppStore } from '../src/appStore.js';
@@ -13,11 +13,11 @@ function define(name, cls) {
 }
 
 // bare subclass: exercises the lifecycle helpers
-class Harness extends TinyBase {}
+class Harness extends Htmelf {}
 define('tb-harness', Harness);
 
 // child that only reads the props its parent handed it
-class Child extends TinyBase {
+class Child extends Htmelf {
   render() {
     this.textContent = 'child';
   }
@@ -25,7 +25,7 @@ class Child extends TinyBase {
 define('tb-child', Child);
 
 // parent that passes callbacks to a child through the props registry
-class Parent extends TinyBase {
+class Parent extends Htmelf {
   saved = [];
   renders = 0;
   render() {
@@ -38,14 +38,14 @@ class Parent extends TinyBase {
 define('tb-parent', Parent);
 
 // builds markup for a child it never mounts
-class UnmountedMarkupHost extends TinyBase {
+class UnmountedMarkupHost extends Htmelf {
   render() {
     this.pendingMarkup = `<tb-child ${this.setProps({ noop: () => {} })}></tb-child>`;
   }
 }
 define('tb-unmounted-host', UnmountedMarkupHost);
 
-class RenderOnce extends TinyBase {
+class RenderOnce extends Htmelf {
   static renderOnce = true;
   renders = 0;
   render() {
@@ -60,7 +60,7 @@ beforeEach(() => {
   resetSharedState();
 });
 
-describe('TinyBase.registerCleanup', () => {
+describe('Htmelf.registerCleanup', () => {
   it('runs every registered cleanup once on disconnect, and not again', () => {
     const el = document.createElement('tb-harness');
     document.body.appendChild(el);
@@ -135,7 +135,7 @@ describe('TinyBase.registerCleanup', () => {
   });
 });
 
-describe('TinyBase.listen', () => {
+describe('Htmelf.listen', () => {
   it('adds the listener, and removes it on disconnect', () => {
     const el = document.createElement('tb-harness');
     document.body.appendChild(el);
@@ -162,7 +162,7 @@ describe('TinyBase.listen', () => {
   });
 });
 
-describe('TinyBase props', () => {
+describe('Htmelf props', () => {
   it('starts with empty props, and keeps them when the element has no key', () => {
     const el = document.createElement('tb-harness');
     expect(el.props).toEqual({});
@@ -182,7 +182,7 @@ describe('TinyBase props', () => {
   });
 
   it('lets a child that reads its props render without a key', () => {
-    class Optional extends TinyBase {
+    class Optional extends Htmelf {
       render() {
         const { label = 'default' } = this.props;
         this.textContent = label;
@@ -281,7 +281,7 @@ describe('TinyBase props', () => {
   });
 });
 
-describe('TinyBase render lifecycle', () => {
+describe('Htmelf render lifecycle', () => {
   it('has not rendered before it connects, and has after', () => {
     const el = document.createElement('tb-render-once');
     expect(el.hasRendered).toBe(false);
@@ -313,7 +313,7 @@ describe('TinyBase render lifecycle', () => {
   });
 });
 
-describe('TinyBase.getStore', () => {
+describe('Htmelf.getStore', () => {
   it('returns the store registered with setAppStore', () => {
     const store = createStore((state = 0) => state, 5);
     setAppStore(store);
@@ -333,7 +333,7 @@ describe('TinyBase.getStore', () => {
     });
 
     it('fails at the first getStore() call a component makes on connect', () => {
-      class NeedsStore extends TinyBase {
+      class NeedsStore extends Htmelf {
         render() {
           this.textContent = String(this.getStore().getState());
         }
@@ -346,10 +346,10 @@ describe('TinyBase.getStore', () => {
   });
 });
 
-describe('TinyBase.withContext', () => {
+describe('Htmelf.withContext', () => {
   it('uses an injected store without setAppStore being called', () => {
     const store = createStore((state = 0) => state, 7);
-    const Base = TinyBase.withContext({ store });
+    const Base = Htmelf.withContext({ store });
     class Counter extends Base {
       render() {
         this.textContent = String(this.getStore().getState());
@@ -363,10 +363,10 @@ describe('TinyBase.withContext', () => {
     expect(el.textContent).toBe('7');
   });
 
-  it('does not change the shared store for plain TinyBase components', () => {
+  it('does not change the shared store for plain Htmelf components', () => {
     const shared = createStore((state = 0) => state, 1);
     setAppStore(shared);
-    TinyBase.withContext({ store: createStore((state = 0) => state, 2) });
+    Htmelf.withContext({ store: createStore((state = 0) => state, 2) });
 
     expect(document.createElement('tb-harness').getStore()).toBe(shared);
   });
@@ -374,7 +374,7 @@ describe('TinyBase.withContext', () => {
   it('falls back to the shared store when only a registry is injected', () => {
     const shared = createStore((state = 0) => state, 3);
     setAppStore(shared);
-    class Plain extends TinyBase.withContext({ propsRegistry: createPropsRegistry() }) {}
+    class Plain extends Htmelf.withContext({ propsRegistry: createPropsRegistry() }) {}
     define('tb-registry-only', Plain);
 
     expect(document.createElement('tb-registry-only').getStore()).toBe(shared);
@@ -382,7 +382,7 @@ describe('TinyBase.withContext', () => {
 
   it('keeps a parent and child on the injected registry, away from the shared one', () => {
     const registry = createPropsRegistry();
-    const Base = TinyBase.withContext({ propsRegistry: registry });
+    const Base = Htmelf.withContext({ propsRegistry: registry });
     class CtxChild extends Base {
       render() {
         this.textContent = 'child';
@@ -412,11 +412,11 @@ describe('TinyBase.withContext', () => {
   });
 });
 
-describe('TinyBase.watchStore', () => {
+describe('Htmelf.watchStore', () => {
   const counterReducer = (state = 0, action) => (action.type === 'inc' ? state + 1 : state);
 
   // subscribes in connectedCallback, as the lifecycle rule asks
-  class Watcher extends TinyBase {
+  class Watcher extends Htmelf {
     renders = 0;
     seen = 0;
     connectedCallback() {

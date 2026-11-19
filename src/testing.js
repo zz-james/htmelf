@@ -1,5 +1,5 @@
-// Helpers for tests of code built on tinybase-element. Not part of the main
-// entry point; import from 'tinybase-element/src/testing.js' or a relative path.
+// Helpers for tests of code built on htmelf. Not part of the main
+// entry point; import from 'htmelf/src/testing.js' or a relative path.
 import { setAppStore } from './appStore.js';
 import { defaultPropsRegistry } from './propsRegistry.js';
 

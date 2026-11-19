@@ -1,4 +1,4 @@
-// A list of teardown functions that run together, once. TinyBase gives each
+// A list of teardown functions that run together, once. Htmelf gives each
 // component one scope and runs it on disconnect; it has no DOM dependency, so
 // it can be used and tested on its own.
 export function createCleanupScope() {

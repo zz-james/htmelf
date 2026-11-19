@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { countProps } from 'tinybase-element';
+import { countProps } from 'htmelf';
 
 // the page harness needs these elements before main.js runs
 document.body.innerHTML = '<button id="mount"></button><b id="keys"></b><div id="slot"></div>';

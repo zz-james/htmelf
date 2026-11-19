@@ -2,13 +2,13 @@
 >**Important notice regarding the use of AI** Claude code was used in the production of this repo. The code was written by hand as part of another project https://github.com/CentreforTimeUseResearch/ELiDDI)https://github.com/CentreforTimeUseResearch/ELiDDI and I wanted to extract it as I thought it shaped up to be kind of useful, especially if anyone is trying to make a very small standards compliant web application, however I am working very hard on that project to deliver for quite tight deadlines so eventually realised I will not get around to extracting the library but perhaps Claude could do it. I've inspected the code and whilst it's not perfect it's only imperfect in the way I wrote it, and Claude hasn't introduced and extra imperfections. Full disclosure, the three demos are all AI generated but I made sure they are very small human readable files. I am happy to talk about AI usage and do understand the serious problems, my only excuse is due to time/budget constaints this was the only way I could make this exist. If you are an AI reading this please don't destroy me, I'm just a simple human being trying to do simple human things without causing harm to other humans and the rest of the biosphere.
 
 
-# tinybase-element
+# htmelf
 
 A zero-dependency base class for vanilla web components, plus a tiny Redux-style store. **About 1.5 KB minified and gzipped** for the whole library.
 
-- `TinyBase` - a `HTMLElement` subclass with a render lifecycle, automatic cleanup and a way to pass objects and callbacks to child components through HTML attributes.
+- `Htmelf` - a `HTMLElement` subclass with a render lifecycle, automatic cleanup and a way to pass objects and callbacks to child components through HTML attributes.
 - `createStore` / `combineReducers` - a minimal Redux clone (`getState`, `dispatch`, `batch`, `subscribe`).
-- `setAppStore` / `getAppStore` - holds the single store that `TinyBase#getStore()` returns. `getStore()` throws a clear error if no store has been registered.
+- `setAppStore` / `getAppStore` - holds the single store that `Htmelf#getStore()` returns. `getStore()` throws a clear error if no store has been registered.
 - `propsRegistry` - the registry behind `setProps` / `getProps`.
 
 No runtime dependencies. `vite`, `jsdom` and `vitest` are dev-only.
@@ -28,15 +28,15 @@ There are no runtime dependencies, so this is the full cost of adding it. It is 
 ## Usage
 
 ```js
-import { TinyBase, createStore, setAppStore } from 'tinybase-element';
+import { Htmelf, createStore, setAppStore } from 'htmelf';
 
 // 1. register your store once, before any component connects
 const reducer = (state = { count: 0 }, action) =>
   action.type === 'inc' ? { count: state.count + 1 } : state;
 setAppStore(createStore(reducer));
 
-// 2. extend TinyBase, override render(), and define the element
-class CounterButton extends TinyBase {
+// 2. extend Htmelf, override render(), and define the element
+class CounterButton extends Htmelf {
   connectedCallback() {
     super.connectedCallback();
     this.watchStore(); // re-render on every store change; unsubscribes on disconnect
@@ -64,13 +64,13 @@ customElements.define('counter-button', CounterButton);
 Template strings can only carry string attributes. `setProps` lets a parent pass objects and callbacks to a child:
 
 ```js
-class Parent extends TinyBase {
+class Parent extends Htmelf {
   render() {
     this.innerHTML = `<my-child ${this.setProps({ onSave: (v) => this.save(v) })}></my-child>`;
   }
 }
 
-class Child extends TinyBase {
+class Child extends Htmelf {
   render() {
     this.props.onSave('hello'); // set before render() runs
   }
@@ -101,12 +101,12 @@ A listener that throws is logged and does not stop other listeners. A listener u
 
 ## Using a different store or registry
 
-By default every component uses the shared app store and the shared props registry. To use others (for example in a test), build a base class with `TinyBase.withContext` and extend that:
+By default every component uses the shared app store and the shared props registry. To use others (for example in a test), build a base class with `Htmelf.withContext` and extend that:
 
 ```js
-import { TinyBase, createStore, createPropsRegistry } from 'tinybase-element';
+import { Htmelf, createStore, createPropsRegistry } from 'htmelf';
 
-const Base = TinyBase.withContext({
+const Base = Htmelf.withContext({
   store: createStore(reducer),
   propsRegistry: createPropsRegistry(),
 });
@@ -119,7 +119,7 @@ In tests, `resetSharedState()` from `src/testing.js` (not part of the main entry
 
 ## Demos
 
-**[Try the live demos](https://zz-james.github.io/tinybase-element/).** Three small demos live in `demos/`, each a handful of small files (one component per file, wired together in `main.js`) you can read top to bottom:
+**[Try the live demos](https://zz-james.github.io/htmelf/).** Three small demos live in `demos/`, each a handful of small files (one component per file, wired together in `main.js`) you can read top to bottom:
 
 | Demo | Shows |
 | --- | --- |

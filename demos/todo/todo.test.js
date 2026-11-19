@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { countProps } from 'tinybase-element';
+import { countProps } from 'htmelf';
 
-const KEY = 'tinybase-element-demo-todo';
+const KEY = 'htmelf-demo-todo';
 const data = new Map();
 const storage = {
   getItem: (key) => data.get(key) ?? null,

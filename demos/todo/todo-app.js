@@ -1,7 +1,7 @@
-import { TinyBase } from 'tinybase-element';
+import { Htmelf } from 'htmelf';
 
 // renders its form once, so typing is never interrupted
-export class TodoApp extends TinyBase {
+export class TodoApp extends Htmelf {
   static renderOnce = true;
 
   render() {

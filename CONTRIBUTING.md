@@ -1,4 +1,4 @@
-# Contributing to tinybase-element
+# Contributing to htmelf
 
 Thanks for your interest. Bug reports, fixes and small improvements are welcome.
 

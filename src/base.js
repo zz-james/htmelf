@@ -2,7 +2,7 @@ import { getAppStore } from './appStore.js';
 import { createCleanupScope } from './cleanupScope.js';
 import { defaultPropsRegistry } from './propsRegistry.js';
 
-export class TinyBase extends HTMLElement {
+export class Htmelf extends HTMLElement {
   // the value of the "key" attribute the parent's setProps() gave this element
   key;
   // what the parent handed down; {} when there is no key or it no longer
@@ -13,7 +13,7 @@ export class TinyBase extends HTMLElement {
   cleanups = createCleanupScope();
 
   // The store and props registry this component uses default to the shared
-  // ones. To use different ones, extend TinyBase.withContext({ store,
+  // ones. To use different ones, extend Htmelf.withContext({ store,
   // propsRegistry }); parent and child must share the same registry, so make
   // every component in a tree extend the same base.
   static withContext({ store, propsRegistry } = {}) {
@@ -105,7 +105,7 @@ export class TinyBase extends HTMLElement {
       // thrown here, not left as an undefined that fails later, far from
       // the cause, with "Cannot read properties of undefined"
       throw new Error(
-        'TinyBase: no app store is registered. Call setAppStore(createStore(reducer)) before any component connects.'
+        'Htmelf: no app store is registered. Call setAppStore(createStore(reducer)) before any component connects.'
       );
     }
     return store;
