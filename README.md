@@ -1,3 +1,7 @@
+> [!NOTE]
+>**Important notice regarding the use of AI** Claude code was used in the production of this repo. The code was written by hand as part of another project (https://github.com/CentreforTimeUseResearch/ELiDDI)https://github.com/CentreforTimeUseResearch/ELiDDI and I wanted to extract it as I thought it shaped up to be kind of useful, especially if anyone is trying to make a very small standards compliant web applicatioin, however I am working very hard on that project to deliver for quite tight deadlines so eventually realised I will not get around to extracting the library but perhaps Claude could do it. I've inspected the code and whilst it's not perfect it's only imperfect in the way I wrote it, and Claude hasn't introduced and extra imperfections. Full disclosure, the three demos are all AI generated but I made sure they are very small human readable files. I am happy to talk about AI usage and do understand the serious problems, my only excuse is due to time/budget constaints this was the only way I could make this exist.
+
+
 # tinybase-element
 
 A zero-dependency base class for vanilla web components, plus a tiny Redux-style store. **About 1.5 KB minified and gzipped** for the whole library.
