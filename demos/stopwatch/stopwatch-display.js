@@ -1,6 +1,6 @@
-import { TinyBase } from 'tinybase-element';
+import { Htmelf } from 'htmelf';
 
-export class StopwatchDisplay extends TinyBase {
+export class StopwatchDisplay extends Htmelf {
   connectedCallback() {
     this.watchStore();
     super.connectedCallback();

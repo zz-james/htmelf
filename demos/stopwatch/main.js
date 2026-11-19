@@ -1,4 +1,4 @@
-import { createStore, setAppStore } from 'tinybase-element';
+import { createStore, setAppStore } from 'htmelf';
 import { stopwatchReducer } from './reducer.js';
 import { StopwatchDisplay } from './stopwatch-display.js';
 import { StopwatchLaps } from './stopwatch-laps.js';

@@ -1,7 +1,7 @@
-import { TinyBase } from 'tinybase-element';
+import { Htmelf } from 'htmelf';
 
 // a dumb child: everything it needs arrives through props
-export class TodoItem extends TinyBase {
+export class TodoItem extends Htmelf {
   render() {
     const { todo, onToggle, onDelete } = this.props;
     this.innerHTML = `

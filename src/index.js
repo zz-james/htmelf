@@ -1,4 +1,4 @@
-export { TinyBase } from './base.js';
+export { Htmelf } from './base.js';
 export { createStore, combineReducers } from './store.js';
 export { setAppStore, getAppStore } from './appStore.js';
 export {

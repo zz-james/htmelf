@@ -5,7 +5,7 @@ const here = fileURLToPath(new URL('.', import.meta.url));
 
 export default {
   root: here,
-  resolve: { alias: { 'tinybase-element': resolve(here, '../src/index.js') } },
+  resolve: { alias: { 'htmelf': resolve(here, '../src/index.js') } },
   build: {
     outDir: resolve(here, '../dist-demos'),
     emptyOutDir: true,

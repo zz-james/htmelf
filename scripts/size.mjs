@@ -11,19 +11,19 @@ import { fileURLToPath } from 'node:url';
 const entry = fileURLToPath(new URL('../src/index.js', import.meta.url));
 
 async function bundle(minify) {
-  const outDir = await mkdtemp(join(tmpdir(), 'tinybase-size-'));
+  const outDir = await mkdtemp(join(tmpdir(), 'htmelf-size-'));
   try {
     await build({
       logLevel: 'silent',
       configFile: false,
       build: {
-        lib: { entry, formats: ['es'], fileName: 'tinybase' },
+        lib: { entry, formats: ['es'], fileName: 'htmelf' },
         outDir,
         emptyOutDir: true,
         minify,
       },
     });
-    return await readFile(join(outDir, 'tinybase.js'));
+    return await readFile(join(outDir, 'htmelf.js'));
   } finally {
     await rm(outDir, { recursive: true, force: true });
   }
@@ -35,7 +35,7 @@ const row = (label, bytes) => console.log(`${label.padEnd(22)}${String(bytes).pa
 const bundled = await bundle(false);
 const minified = await bundle(true);
 
-console.log('tinybase-element (src/index.js, no demos)\n');
+console.log('htmelf (src/index.js, no demos)\n');
 row('bundled', bundled.length);
 row('minified', minified.length);
 row('minified + gzip', gzipSync(minified).length);

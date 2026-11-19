@@ -1,10 +1,10 @@
-import { TinyBase } from 'tinybase-element';
+import { Htmelf } from 'htmelf';
 import { formatTime } from './reducer.js';
 import { createTicker } from './ticker.js';
 import { handleShortcut } from './shortcuts.js';
 
 // owns the interval and the keyboard shortcuts
-export class StopwatchTimer extends TinyBase {
+export class StopwatchTimer extends Htmelf {
   static renderOnce = true;
 
   connectedCallback() {

@@ -1,10 +1,10 @@
-import { TinyBase } from 'tinybase-element';
+import { Htmelf } from 'htmelf';
 
 // renderOnce: the card renders on first connect and keeps its markup when the
 // board moves it to another column. The "+1" count lives on the element, not
 // in the store, so it surviving a move shows the element itself was moved,
 // not rebuilt.
-export class KanbanCard extends TinyBase {
+export class KanbanCard extends Htmelf {
   static renderOnce = true;
   likes = 0;
 

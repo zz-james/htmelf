@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { countProps, createStore, setAppStore } from 'tinybase-element';
+import { countProps, createStore, setAppStore } from 'htmelf';
 import { kanbanReducer } from './reducer.js';
 import './main.js';
 
